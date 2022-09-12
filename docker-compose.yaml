@@ -10,6 +10,7 @@ services:
     build:
       context: ./
       dockerfile: ./server/Dockerfile
+    image: korasdor/grpc-server:latest
     ports:
       - "4040:4040"
     networks:
@@ -24,6 +25,7 @@ services:
     build:
       context: ./
       dockerfile: ./client/Dockerfile
+    image: korasdor/grpc-client:latest
     ports:
       - "8080:8080"
     networks:
