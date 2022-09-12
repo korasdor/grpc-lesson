@@ -1,0 +1,36 @@
+version: '3.9'
+
+networks:
+  grpc-go:
+    driver: bridge
+
+services:
+  grpc-server:
+    container_name: grpc-server
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile
+    ports:
+      - "4040:4040"
+    networks:
+      - grpc-go
+    healthcheck:
+      test: ["CMD", "netstat", "-an", "|", "grep", "9083"]
+      interval: 5s
+      timeout: 15s
+      retries: 5
+  grpc-client:
+    container_name: grpc-client
+    build:
+      context: ./
+      dockerfile: ./client/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - grpc-go
+    restart: on-failure
+    depends_on:
+      - grpc-server
+    environment:
+      GIN_MODE: "debug"
+      GRPC_ADDR: "dns:///grpc-server:4040"
